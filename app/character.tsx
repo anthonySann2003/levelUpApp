@@ -1,8 +1,46 @@
-import { StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 
 export default function CharacterScreen() {
+
+  //For attribute section
+  const renderAttribute = (
+    icon: string,
+    label: string,
+    value: number,
+    color: string
+  ) => {
+    const max = 30; // arbitrary max for skeleton
+    const percentage = (value / max) * 100;
+  
+    return (
+      <View style={styles.attributeItem} key={label}>
+        <View style={styles.attributeHeader}>
+          <View style={styles.attributeLeft}>
+            <Text style={styles.attributeIcon}>{icon}</Text>
+            <Text style={styles.attributeLabel}>{label}</Text>
+          </View>
+          <Text style={styles.attributeValue}>{value}</Text>
+        </View>
+  
+        <View style={styles.attributeBarBackground}>
+          <View
+            style={[
+              styles.attributeBarFill,
+              { width: `${percentage}%`, backgroundColor: color },
+            ]}
+          />
+        </View>
+      </View>
+    );
+  };
+  //end of attribute section
+
   return (
-    <View style={styles.screen}>
+    //<View style={styles.screen}>
+    <ScrollView style={styles.screen} 
+      contentContainerStyle={styles.scrollContent} 
+      showsVerticalScrollIndicator={false}
+    >
       <View style={styles.header}>
         <Text style={styles.title}>Quest Log</Text>
         <Text style={styles.subtitle}>0 / 6 QUESTS COMPLETED TODAY</Text>
@@ -24,7 +62,21 @@ export default function CharacterScreen() {
           <Text style={styles.xpText}>200 / 500 XP</Text>
         </View>
       </View>
-    </View>
+
+      {/* ATTRIBUTES SECTION */}
+      <View style={styles.attributesContainer}>
+        <Text style={styles.attributesTitle}>ATTRIBUTES</Text>
+
+        {renderAttribute("⚔️", "STRENGTH", 12, "#ef4444")}
+        {renderAttribute("🛡️", "ENDURANCE", 18, "#f97316")}
+        {renderAttribute("🧘", "DISCIPLINE", 24, "#a855f7")}
+        {renderAttribute("🎯", "FOCUS", 15, "#38bdf8")}
+        {renderAttribute("📘", "INTELLIGENCE", 20, "#34d399")}
+        {renderAttribute("⚡", "AGILITY", 10, "#eab308")}
+      </View>
+
+
+    </ScrollView>
   );
 }
 
@@ -32,6 +84,9 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor: "#000000", // Black background
+  },
+  scrollContent: {
+    paddingBottom: 40,
   },
   header: {
     paddingTop: 80, // pushes text down from top
@@ -108,4 +163,66 @@ const styles = StyleSheet.create({
     textAlign: "center", // centers text under bar
     width: "100%",
   },
+
+  attributesContainer: {
+    marginTop: 40,
+    marginHorizontal: 20,
+    padding: 20,
+    backgroundColor: "#111827",
+    borderRadius: 16,
+  },
+  
+  attributesTitle: {
+    textAlign: "center",
+    color: "#9ca3af",
+    fontSize: 14,
+    letterSpacing: 2,
+    marginBottom: 20,
+  },
+  
+  attributeItem: {
+    marginBottom: 18,
+  },
+  
+  attributeHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 6,
+  },
+  
+  attributeLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  
+  attributeIcon: {
+    fontSize: 16,
+    marginRight: 8,
+  },
+  
+  attributeLabel: {
+    color: "white",
+    fontSize: 14,
+    letterSpacing: 1,
+  },
+  
+  attributeValue: {
+    color: "white",
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  
+  attributeBarBackground: {
+    height: 8,
+    backgroundColor: "#1f2937",
+    borderRadius: 4,
+    overflow: "hidden",
+  },
+  
+  attributeBarFill: {
+    height: "100%",
+    borderRadius: 4,
+  },
+  
 });
