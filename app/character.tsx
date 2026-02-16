@@ -35,6 +35,29 @@ export default function CharacterScreen() {
   };
   //end of attribute section
 
+  //daily quest section
+  const renderQuest = (
+    icon: string,
+    title: string,
+    reward: string
+  ) => {
+    return (
+      <View style={styles.questItem} key={title}>
+        <View style={styles.questLeft}>
+          <Text style={styles.questIcon}>{icon}</Text>
+          <View>
+            <Text style={styles.questTitle}>{title}</Text>
+            <Text style={styles.questReward}>{reward}</Text>
+          </View>
+        </View>
+  
+        {/* Placeholder completion circle */}
+        <View style={styles.questCircle} />
+      </View>
+    );
+  };
+  //end of daily quest section
+
   return (
     //<View style={styles.screen}>
     <ScrollView style={styles.screen} 
@@ -73,6 +96,18 @@ export default function CharacterScreen() {
         {renderAttribute("🎯", "FOCUS", 15, "#38bdf8")}
         {renderAttribute("📘", "INTELLIGENCE", 20, "#34d399")}
         {renderAttribute("⚡", "AGILITY", 10, "#eab308")}
+      </View>
+
+      {/* DAILY QUESTS SECTION */}
+      <View style={styles.questsContainer}>
+        <Text style={styles.questsTitle}>DAILY QUESTS</Text>
+
+        {renderQuest("💪", "Morning Workout", "+25 XP · STRENGTH")}
+        {renderQuest("📚", "Read 30 Minutes", "+20 XP · INTELLIGENCE")}
+        {renderQuest("🧘", "Meditate", "+15 XP · FOCUS")}
+        {renderQuest("🧊", "Cold Shower", "+20 XP · DISCIPLINE")}
+        {renderQuest("🏃", "Run 5K", "+30 XP · ENDURANCE")}
+        {renderQuest("🤸", "Stretch Routine", "+15 XP · AGILITY")}
       </View>
 
 
@@ -225,4 +260,61 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   
+  /* DAILY QUESTS */
+  questsContainer: {
+    marginTop: 40,
+    marginHorizontal: 20,
+    padding: 20,
+    backgroundColor: "#111827",
+    borderRadius: 16,
+  },
+
+  questsTitle: {
+    textAlign: "center",
+    color: "#9ca3af",
+    fontSize: 14,
+    letterSpacing: 2,
+    marginBottom: 20,
+  },
+
+  questItem: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 14,
+    paddingHorizontal: 14,
+    backgroundColor: "#0f172a",
+    borderRadius: 12,
+    marginBottom: 12,
+  },
+
+  questLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+
+  questIcon: {
+    fontSize: 20,
+    marginRight: 12,
+  },
+
+  questTitle: {
+    color: "white",
+    fontSize: 14,
+    fontWeight: "500",
+  },
+
+  questReward: {
+    color: "#9ca3af",
+    fontSize: 12,
+    marginTop: 2,
+  },
+
+  questCircle: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    borderWidth: 2,
+    borderColor: "#374151",
+  },
 });
