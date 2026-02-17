@@ -48,7 +48,16 @@ export default function CharacterScreen() {
     const handleComplete = () => {
       if (isCompleted) return; // can't un-complete for now
       setCompletedQuests([...completedQuests, title]);
-      setCurrentXp(prev => Math.min(prev + xpReward, xpToNextLevel));
+      setCurrentXp(prev => Math.min(prev + xpReward, xpToNextLevel)); //handling a quest being completed and updating xp
+
+      const newXp = currentXp + xpReward;
+      if (newXp >= xpToNextLevel) { //If user levled up
+        setLevel(prev => prev + 1);
+        setCurrentXp(newXp - xpToNextLevel); //carry over remainder of xp
+      }
+      else{
+        setCurrentXp(newXp) //No level just set xp to new amount
+      }
     };
   
     return (
@@ -115,12 +124,12 @@ export default function CharacterScreen() {
       <View style={styles.questsContainer}>
         <Text style={styles.questsTitle}>DAILY QUESTS</Text>
 
-        {renderQuest("💪", "Morning Workout", "+25 XP · STRENGTH", 25)}
-        {renderQuest("📚", "Read 30 Minutes", "+20 XP · INTELLIGENCE", 20)}
-        {renderQuest("🧘", "Meditate", "+15 XP · FOCUS", 15)}
-        {renderQuest("🧊", "Cold Shower", "+20 XP · DISCIPLINE", 20)}
-        {renderQuest("🏃", "Run 5K", "+30 XP · ENDURANCE", 30)}
-        {renderQuest("🤸", "Stretch Routine", "+15 XP · AGILITY", 15)}
+        {renderQuest("💪", "Morning Workout", "+150 XP · STRENGTH", 150)}
+        {renderQuest("📚", "Read 30 Minutes", "+75 XP · INTELLIGENCE", 75)}
+        {renderQuest("🧘", "Meditate", "+100 XP · FOCUS", 100)}
+        {renderQuest("🧊", "Cold Shower", "+50 XP · DISCIPLINE", 50)}
+        {renderQuest("🏃", "Run 5K", "+350 XP · ENDURANCE", 350)}
+        {renderQuest("🤸", "Stretch Routine", "+50 XP · AGILITY", 50)}
       </View>
 
 
