@@ -1,6 +1,12 @@
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { useState } from "react";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
 export default function CharacterScreen() {
+
+  //Adding state variables
+  const [completedQuests, setCompletedQuests] = useState<string[]>([]);
+  const [currentXp, setCurrentXp] = useState(200);
+  const xpToNextLevel = 500;
 
   //For attribute section
   const renderAttribute = (
@@ -35,27 +41,56 @@ export default function CharacterScreen() {
   };
   //end of attribute section
 
-  //daily quest section
-  const renderQuest = (
-    icon: string,
-    title: string,
-    reward: string
-  ) => {
+  const renderQuest = (icon: string, title: string, reward: string, xpReward: number) => {
+    const isCompleted = completedQuests.includes(title);
+  
+    const handleComplete = () => {
+      if (isCompleted) return; // can't un-complete for now
+      setCompletedQuests([...completedQuests, title]);
+      setCurrentXp(prev => Math.min(prev + xpReward, xpToNextLevel));
+    };
+  
     return (
       <View style={styles.questItem} key={title}>
         <View style={styles.questLeft}>
           <Text style={styles.questIcon}>{icon}</Text>
           <View>
-            <Text style={styles.questTitle}>{title}</Text>
+            <Text style={[styles.questTitle, isCompleted && { color: "#9ca3af" }]}>{title}</Text>
             <Text style={styles.questReward}>{reward}</Text>
           </View>
         </View>
   
-        {/* Placeholder completion circle */}
-        <View style={styles.questCircle} />
+        <Pressable onPress={handleComplete}>
+          <View style={[
+            styles.questCircle,
+            isCompleted && { backgroundColor: "#facc15", borderColor: "#facc15" }
+          ]} />
+        </Pressable>
       </View>
     );
   };
+  
+  //daily quest section
+  //const renderQuest = (
+    //icon: string,
+    //title: string,
+    //reward: string,
+    //xpReward: number) => {
+    //return (
+      //<View style={styles.questItem} key={title}>
+        //<View style={styles.questLeft}>
+          //<Text style={styles.questIcon}>{icon}</Text>
+          //<View>
+            //<Text style={styles.questTitle}>{title}</Text>
+            //<Text style={styles.questReward}>{reward}</Text>
+          //</View>
+        //</View>
+  
+        {/* Placeholder completion circle */}
+        //<View style={styles.questCircle} />
+      //</View>
+    //);
+  //};
   //end of daily quest section
 
   return (
@@ -80,9 +115,9 @@ export default function CharacterScreen() {
       <View style={styles.xpContainer}>
         <View style={styles.xpBarWrapper}>
           <View style={styles.xpBarBackground}>
-            <View style={styles.xpBarFill} />
+            <View style={[styles.xpBarFill, {width: `${(currentXp / xpToNextLevel) * 100}%`}]} /> 
           </View>
-          <Text style={styles.xpText}>200 / 500 XP</Text>
+          <Text style={styles.xpText}> {currentXp} / {xpToNextLevel} XP</Text>
         </View>
       </View>
 
@@ -102,12 +137,12 @@ export default function CharacterScreen() {
       <View style={styles.questsContainer}>
         <Text style={styles.questsTitle}>DAILY QUESTS</Text>
 
-        {renderQuest("💪", "Morning Workout", "+25 XP · STRENGTH")}
-        {renderQuest("📚", "Read 30 Minutes", "+20 XP · INTELLIGENCE")}
-        {renderQuest("🧘", "Meditate", "+15 XP · FOCUS")}
-        {renderQuest("🧊", "Cold Shower", "+20 XP · DISCIPLINE")}
-        {renderQuest("🏃", "Run 5K", "+30 XP · ENDURANCE")}
-        {renderQuest("🤸", "Stretch Routine", "+15 XP · AGILITY")}
+        {renderQuest("💪", "Morning Workout", "+25 XP · STRENGTH", 25)}
+        {renderQuest("📚", "Read 30 Minutes", "+20 XP · INTELLIGENCE", 20)}
+        {renderQuest("🧘", "Meditate", "+15 XP · FOCUS", 15)}
+        {renderQuest("🧊", "Cold Shower", "+20 XP · DISCIPLINE", 20)}
+        {renderQuest("🏃", "Run 5K", "+30 XP · ENDURANCE", 30)}
+        {renderQuest("🤸", "Stretch Routine", "+15 XP · AGILITY", 15)}
       </View>
 
 
