@@ -5,7 +5,8 @@ export default function CharacterScreen() {
 
   //Adding state variables
   const [completedQuests, setCompletedQuests] = useState<string[]>([]);
-  const [currentXp, setCurrentXp] = useState(200);
+  const [currentXp, setCurrentXp] = useState(0);
+  const [level, setLevel] = useState(1);
   const xpToNextLevel = 500;
 
   //For attribute section
@@ -70,29 +71,6 @@ export default function CharacterScreen() {
     );
   };
   
-  //daily quest section
-  //const renderQuest = (
-    //icon: string,
-    //title: string,
-    //reward: string,
-    //xpReward: number) => {
-    //return (
-      //<View style={styles.questItem} key={title}>
-        //<View style={styles.questLeft}>
-          //<Text style={styles.questIcon}>{icon}</Text>
-          //<View>
-            //<Text style={styles.questTitle}>{title}</Text>
-            //<Text style={styles.questReward}>{reward}</Text>
-          //</View>
-        //</View>
-  
-        {/* Placeholder completion circle */}
-        //<View style={styles.questCircle} />
-      //</View>
-    //);
-  //};
-  //end of daily quest section
-
   return (
     //<View style={styles.screen}>
     <ScrollView style={styles.screen} 
@@ -101,13 +79,13 @@ export default function CharacterScreen() {
     >
       <View style={styles.header}>
         <Text style={styles.title}>Quest Log</Text>
-        <Text style={styles.subtitle}>0 / 6 QUESTS COMPLETED TODAY</Text>
+        <Text style={styles.subtitle}>{completedQuests.length} / 6 QUESTS COMPLETED TODAY</Text>
       </View>
 
       <View style={styles.levelContainer}>
         <View style={styles.levelCircle}>
           <Text style={styles.levelLabel}>LEVEL</Text>
-          <Text style={styles.levelNumber}>3</Text>
+          <Text style={styles.levelNumber}>{level}</Text>
         </View>
       </View>
 
@@ -125,12 +103,12 @@ export default function CharacterScreen() {
       <View style={styles.attributesContainer}>
         <Text style={styles.attributesTitle}>ATTRIBUTES</Text>
 
-        {renderAttribute("⚔️", "STRENGTH", 12, "#ef4444")}
-        {renderAttribute("🛡️", "ENDURANCE", 18, "#f97316")}
-        {renderAttribute("🧘", "DISCIPLINE", 24, "#a855f7")}
-        {renderAttribute("🎯", "FOCUS", 15, "#38bdf8")}
-        {renderAttribute("📘", "INTELLIGENCE", 20, "#34d399")}
-        {renderAttribute("⚡", "AGILITY", 10, "#eab308")}
+        {renderAttribute("⚔️", "STRENGTH", 3, "#ef4444")}
+        {renderAttribute("🛡️", "ENDURANCE", 3, "#f97316")}
+        {renderAttribute("🧘", "DISCIPLINE", 3, "#a855f7")}
+        {renderAttribute("🎯", "FOCUS", 3, "#38bdf8")}
+        {renderAttribute("📘", "INTELLIGENCE", 3, "#34d399")}
+        {renderAttribute("⚡", "AGILITY", 3, "#eab308")}
       </View>
 
       {/* DAILY QUESTS SECTION */}
