@@ -1,52 +1,16 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useEffect, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { useCharacterStore } from '../store/habitsStore';
 
 export default function CharacterScreen() {
 
-  //Adding state variables
-  const [completedQuests, setCompletedQuests] = useState<string[]>([]);
-  const [currentXp, setCurrentXp] = useState(0);
-  const [level, setLevel] = useState(1);
-  const xpToNextLevel = 500;
+  //Adding variables from habit store
+  const { level, currentXp, xpToNextLevel, completedQuests, completeQuest } = useCharacterStore();
 
-  //Loading saved data when the app opens
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const saved = await AsyncStorage.getItem('character');
-        if (saved) {
-          const parsed = JSON.parse(saved);
-          setLevel(parsed.level);
-          setCurrentXp(parsed.currentXp);
-          setCompletedQuests(parsed.completedQuests);
-        }
-      } catch (e) {
-        console.log('Failed to load data', e);
-      }
-    };
-    loadData();
-  }, []); // empty array means this only runs once on mount
-
-  //Saving data whenever the state changes (autosaves)
-  useEffect(() => {
-    const saveData = async () => {
-      try {
-        const data = JSON.stringify({ level, currentXp, completedQuests });
-        await AsyncStorage.setItem('character', data);
-      } catch (e) {
-        console.log('Failed to save data', e);
-      }
-    };
-    saveData();
-  }, [level, currentXp, completedQuests]); // runs whenever any of these change
-
-  //Temporary function to clear data for testing/debugging
+  //Temporary function to delete data for testing purposes
   const clearData = async () => {
     await AsyncStorage.clear();
-    setLevel(1);
-    setCurrentXp(0);
-    setCompletedQuests([]);
+    useCharacterStore.setState({ level: 1, currentXp: 0, completedQuests: [] });
   };
 
   //For attribute section
@@ -85,20 +49,8 @@ export default function CharacterScreen() {
   const renderQuest = (icon: string, title: string, reward: string, xpReward: number) => {
     const isCompleted = completedQuests.includes(title);
   
-    const handleComplete = () => {
-      if (isCompleted) return; // can't un-complete for now
-      setCompletedQuests([...completedQuests, title]);
-      setCurrentXp(prev => Math.min(prev + xpReward, xpToNextLevel)); //handling a quest being completed and updating xp
-
-      const newXp = currentXp + xpReward;
-      if (newXp >= xpToNextLevel) { //If user levled up
-        setLevel(prev => prev + 1);
-        setCurrentXp(newXp - xpToNextLevel); //carry over remainder of xp
-      }
-      else{
-        setCurrentXp(newXp) //No level just set xp to new amount
-      }
-    };
+    //Handles completed quest
+    const handleComplete = () => completeQuest(title, xpReward);
   
     return (
       <View style={styles.questItem} key={title}>
@@ -173,8 +125,8 @@ export default function CharacterScreen() {
       </View>
 
 
-      <Pressable onPress={clearData}>
-        <Text style={{ color: 'red' }}>Reset</Text>
+      <Pressable onPress={clearData}> 
+        <Text style={{ color: 'red' }}>Reset</Text> 
       </Pressable>
 
     </ScrollView>
