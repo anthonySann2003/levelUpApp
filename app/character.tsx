@@ -1,4 +1,5 @@
-import { useState } from "react";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useEffect, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
 export default function CharacterScreen() {
@@ -8,6 +9,45 @@ export default function CharacterScreen() {
   const [currentXp, setCurrentXp] = useState(0);
   const [level, setLevel] = useState(1);
   const xpToNextLevel = 500;
+
+  //Loading saved data when the app opens
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const saved = await AsyncStorage.getItem('character');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          setLevel(parsed.level);
+          setCurrentXp(parsed.currentXp);
+          setCompletedQuests(parsed.completedQuests);
+        }
+      } catch (e) {
+        console.log('Failed to load data', e);
+      }
+    };
+    loadData();
+  }, []); // empty array means this only runs once on mount
+
+  //Saving data whenever the state changes (autosaves)
+  useEffect(() => {
+    const saveData = async () => {
+      try {
+        const data = JSON.stringify({ level, currentXp, completedQuests });
+        await AsyncStorage.setItem('character', data);
+      } catch (e) {
+        console.log('Failed to save data', e);
+      }
+    };
+    saveData();
+  }, [level, currentXp, completedQuests]); // runs whenever any of these change
+
+  //Temporary function to clear data for testing/debugging
+  const clearData = async () => {
+    await AsyncStorage.clear();
+    setLevel(1);
+    setCurrentXp(0);
+    setCompletedQuests([]);
+  };
 
   //For attribute section
   const renderAttribute = (
@@ -132,6 +172,10 @@ export default function CharacterScreen() {
         {renderQuest("🤸", "Stretch Routine", "+50 XP · AGILITY", 50)}
       </View>
 
+
+      <Pressable onPress={clearData}>
+        <Text style={{ color: 'red' }}>Reset</Text>
+      </Pressable>
 
     </ScrollView>
   );
