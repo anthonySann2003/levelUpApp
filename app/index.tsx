@@ -12,6 +12,13 @@ export default function Index() {
       >
         <Text style={styles.buttonText}>Go To Character</Text>
       </TouchableOpacity>
+
+      <TouchableOpacity
+      style={styles.button}
+      onPress={() => router.push("/habits")}
+      >
+      <Text style={styles.buttonText}>Go To Habits</Text>
+    </TouchableOpacity>
     </View>
   );
 }
@@ -22,6 +29,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#111827",
     justifyContent: "center",
     alignItems: "center",
+    gap: 12,
   },
   title: {
     color: "white",
