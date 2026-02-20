@@ -5,12 +5,25 @@ import { useCharacterStore } from '../store/habitsStore';
 export default function CharacterScreen() {
 
   //Adding variables from habit store
-  const { level, currentXp, xpToNextLevel, completedQuests, completeQuest } = useCharacterStore();
+  const { level, currentXp, xpToNextLevel, completedQuests, completeQuest, attributes } = useCharacterStore();
 
   //Temporary function to delete data for testing purposes
   const clearData = async () => {
     await AsyncStorage.clear();
-    useCharacterStore.setState({ level: 1, currentXp: 0, completedQuests: [] });
+    useCharacterStore.setState({
+      level: 1,
+      currentXp: 0,
+      completedQuests: [],
+      attributes: {
+        STRENGTH: 3,
+        ENDURANCE: 3,
+        DISCIPLINE: 3,
+        FOCUS: 3,
+        INTELLIGENCE: 3,
+        AGILITY: 3,
+      },
+      habits: useCharacterStore.getState().habits.map(h => ({ ...h, completedDates: [] }))
+    });
   };
 
   //For attribute section
@@ -104,12 +117,12 @@ export default function CharacterScreen() {
       <View style={styles.attributesContainer}>
         <Text style={styles.attributesTitle}>ATTRIBUTES</Text>
 
-        {renderAttribute("⚔️", "STRENGTH", 3, "#ef4444")}
-        {renderAttribute("🛡️", "ENDURANCE", 3, "#f97316")}
-        {renderAttribute("🧘", "DISCIPLINE", 3, "#a855f7")}
-        {renderAttribute("🎯", "FOCUS", 3, "#38bdf8")}
-        {renderAttribute("📘", "INTELLIGENCE", 3, "#34d399")}
-        {renderAttribute("⚡", "AGILITY", 3, "#eab308")}
+        {renderAttribute("⚔️", "STRENGTH", attributes.STRENGTH, "#ef4444")}
+        {renderAttribute("🛡️", "ENDURANCE", attributes.ENDURANCE, "#f97316")}
+        {renderAttribute("🧘", "DISCIPLINE", attributes.DISCIPLINE, "#a855f7")}
+        {renderAttribute("🎯", "FOCUS", attributes.FOCUS, "#38bdf8")}
+        {renderAttribute("📘", "INTELLIGENCE", attributes.INTELLIGENCE, "#34d399")}
+        {renderAttribute("⚡", "AGILITY", attributes.AGILITY, "#eab308")}
       </View>
 
       {/* DAILY QUESTS SECTION */}

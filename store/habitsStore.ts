@@ -9,6 +9,14 @@ interface CharacterState {
   currentXp: number;
   xpToNextLevel: number;
   completedQuests: string[];
+  attributes: {
+    STRENGTH: number;
+    ENDURANCE: number;
+    DISCIPLINE: number;
+    FOCUS: number;
+    INTELLIGENCE: number;
+    AGILITY: number;
+  };
   addXp: (amount: number) => void;
   completeQuest: (title: string, xpReward: number) => void;
   resetQuests: () => void;
@@ -30,6 +38,14 @@ export const useCharacterStore = create<CharacterState & HabitsState>()(
       currentXp: 0,
       xpToNextLevel: 500,
       completedQuests: [],
+      attributes: { //Adding starting attributes
+        STRENGTH: 3, 
+        ENDURANCE: 3,
+        DISCIPLINE: 3,
+        FOCUS: 3,
+        INTELLIGENCE: 3,
+        AGILITY: 3,
+      },
       addXp: (amount) => set((state) => {
         const newXp = state.currentXp + amount;
         if (newXp >= state.xpToNextLevel) {
@@ -39,19 +55,41 @@ export const useCharacterStore = create<CharacterState & HabitsState>()(
       }),
       completeQuest: (title, xpReward) => set((state) => {
         if (state.completedQuests.includes(title)) return state;
-        const newXp = state.currentXp + xpReward;
-        if (newXp >= state.xpToNextLevel) {
+        const newXp = state.currentXp + xpReward; //Adding xp to total
+
+          // map quest titles to their attribute
+          const questAttributes: Record<string, keyof typeof state.attributes> = {
+            "Morning Workout": "STRENGTH",
+            "Read 30 Minutes": "INTELLIGENCE",
+            "Meditate": "FOCUS",
+            "Cold Shower": "DISCIPLINE",
+            "Run 5K": "ENDURANCE",
+            "Stretch Routine": "AGILITY",
+          };
+
+          const attr = questAttributes[title]; //Temp code for mapping daily quests to their attribute
+
+          if (newXp >= state.xpToNextLevel) {
+            return {
+              completedQuests: [...state.completedQuests, title],
+              level: state.level + 1,
+              currentXp: newXp - state.xpToNextLevel,
+              attributes: attr ? {
+                ...state.attributes,
+                [attr]: state.attributes[attr] + 1,
+              } : state.attributes,
+            };
+          }
           return {
             completedQuests: [...state.completedQuests, title],
-            level: state.level + 1,
-            currentXp: newXp - state.xpToNextLevel,
+            currentXp: newXp,
+            attributes: attr ? {
+              ...state.attributes,
+              [attr]: state.attributes[attr] + 1,
+            } : state.attributes,
           };
-        }
-        return {
-          completedQuests: [...state.completedQuests, title],
-          currentXp: newXp,
-        };
-      }),
+        }),
+
       resetQuests: () => set({ completedQuests: [] }),
 
       // --- HABITS STATE ---
@@ -87,12 +125,21 @@ export const useCharacterStore = create<CharacterState & HabitsState>()(
           ? state.currentXp - habit.xpReward  // unchecking removes XP
           : state.currentXp + habit.xpReward; // checking adds XP
       
+          // get the first attribute from the habit's attribute array
+        const attr = habit.attribute[0] as keyof typeof state.attributes;
+
+        const updatedAttributes = {
+            ...state.attributes,
+            [attr]: Math.max(0, state.attributes[attr] + (isCurrentlyComplete ? -1 : 1)),
+          };
+
         // handle level up
         if (!isCurrentlyComplete && newXp >= state.xpToNextLevel) {
           return {
             habits: updatedHabits,
             level: state.level + 1,
             currentXp: newXp - state.xpToNextLevel,
+            attributes: updatedAttributes,
           };
         }
       
@@ -100,6 +147,7 @@ export const useCharacterStore = create<CharacterState & HabitsState>()(
         return {
           habits: updatedHabits,
           currentXp: Math.max(0, newXp),
+          attributes: updatedAttributes,
         };
       }),
 
