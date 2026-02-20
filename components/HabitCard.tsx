@@ -1,5 +1,6 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Habit } from "../types";
+import { calculateStreak } from '../utils/streakHelper';
 
 interface Props {
   habit: Habit;
@@ -9,9 +10,15 @@ interface Props {
 }
 
 export default function HabitCard({ habit, isCompleted, onToggle, onDelete }: Props) {
+  const streak = calculateStreak(habit.completedDates); //Bringing in calculate streak function
   return (
     <View style={[styles.card, isCompleted && styles.cardCompleted]}>
-      
+    
+      {/* Streak badge */}
+      {streak > 0 && (
+        <Text style={styles.streakBadge}>🔥{streak}</Text>
+      )}
+
       {/* Icon and name */}
       <Text style={styles.icon}>{habit.icon}</Text>
       <Text style={styles.name}>{habit.name}</Text>
@@ -95,5 +102,13 @@ const styles = StyleSheet.create({
     color: "#ef4444",
     fontSize: 12,
     marginTop: 4,
+  },
+  streakBadge: {
+    position: "absolute",
+    top: 8,
+    right: 8,
+    color: "#f97316",
+    fontSize: 11,
+    fontWeight: "600",
   },
 });
