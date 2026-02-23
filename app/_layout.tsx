@@ -1,6 +1,8 @@
 import { Tabs } from "expo-router";
+import { useLevelUpSound } from '../hooks/useLevelUpSound';
 
 export default function RootLayout() {
+  useLevelUpSound(); //Calling level up sound
   return (
     <Tabs screenOptions={{
       headerShown: false,

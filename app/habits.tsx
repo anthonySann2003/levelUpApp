@@ -6,7 +6,7 @@ import { Attribute } from "../types";
 import { getTodayLocal } from '../utils/dateHelpers';
 
 export default function HabitsScreen() {
-  const { habits, toggleHabitComplete, deleteHabit, addHabit } = useCharacterStore(); //Deconstructing store variables
+  const { habits, toggleHabitComplete, deleteHabit, addHabit, level } = useCharacterStore(); //Deconstructing store variables
   const [today, setToday] = useState(getTodayLocal());
 
   //Checking for the date on set interval for updating streaks
