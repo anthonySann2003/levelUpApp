@@ -1,12 +1,25 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FlatList, Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import HabitCard from "../components/HabitCard";
 import { useCharacterStore } from "../store/habitsStore";
 import { Attribute } from "../types";
+import { getTodayLocal } from '../utils/dateHelpers';
 
 export default function HabitsScreen() {
   const { habits, toggleHabitComplete, deleteHabit, addHabit } = useCharacterStore(); //Deconstructing store variables
-  const today = new Date().toISOString().split('T')[0]; // "2026-02-19"
+  const [today, setToday] = useState(getTodayLocal());
+
+  //Checking for the date on set interval for updating streaks
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const newDate = getTodayLocal();
+      if (newDate !== today) {
+        setToday(newDate);
+      }
+    }, 60000);
+
+    return () => clearInterval(interval);
+  }, [today]);
 
   //Modal form state variables
   const [modalVisible, setModalVisible] = useState(false);

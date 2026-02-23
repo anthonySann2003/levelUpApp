@@ -1,16 +1,20 @@
+import { getTodayLocal } from './dateHelpers';
+
 export function calculateStreak(completedDates: string[]): number {
     if (completedDates.length === 0) return 0;
   
-    const today = new Date();
+    const todayString = getTodayLocal();
     let streak = 0;
-    let checkDate = new Date(today);
-  
-    // start checking from yesterday
+    
+    const checkDate = new Date();
     checkDate.setDate(checkDate.getDate() - 1);
   
     while (true) {
-      const dateString = checkDate.toISOString().split('T')[0];
-      
+      const year = checkDate.getFullYear();
+      const month = String(checkDate.getMonth() + 1).padStart(2, '0');
+      const day = String(checkDate.getDate()).padStart(2, '0');
+      const dateString = `${year}-${month}-${day}`;
+  
       if (completedDates.includes(dateString)) {
         streak++;
         checkDate.setDate(checkDate.getDate() - 1);
@@ -19,8 +23,6 @@ export function calculateStreak(completedDates: string[]): number {
       }
     }
   
-    // if completed today, streak is at least 1
-    const todayString = today.toISOString().split('T')[0];
     if (completedDates.includes(todayString) && streak === 0) {
       return 1;
     }
