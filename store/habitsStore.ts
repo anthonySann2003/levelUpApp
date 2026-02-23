@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
-import { Habit } from '../types';
+import { Attribute, Habit } from '../types';
 
 //Character state variables
 interface CharacterState {
@@ -18,7 +18,7 @@ interface CharacterState {
     AGILITY: number;
   };
   addXp: (amount: number) => void;
-  completeQuest: (title: string, xpReward: number) => void;
+  completeQuest: (title: string, xpReward: number, attribute: Attribute) => void;
   resetQuests: () => void;
 }
 
@@ -53,42 +53,29 @@ export const useCharacterStore = create<CharacterState & HabitsState>()(
         }
         return { currentXp: newXp };
       }),
-      completeQuest: (title, xpReward) => set((state) => {
+      completeQuest: (title, xpReward, attribute) => set((state) => {
         if (state.completedQuests.includes(title)) return state;
-        const newXp = state.currentXp + xpReward; //Adding xp to total
-
-          // map quest titles to their attribute
-          const questAttributes: Record<string, keyof typeof state.attributes> = {
-            "Morning Workout": "STRENGTH",
-            "Read 30 Minutes": "INTELLIGENCE",
-            "Meditate": "FOCUS",
-            "Cold Shower": "DISCIPLINE",
-            "Run 5K": "ENDURANCE",
-            "Stretch Routine": "AGILITY",
-          };
-
-          const attr = questAttributes[title]; //Temp code for mapping daily quests to their attribute
-
-          if (newXp >= state.xpToNextLevel) {
-            return {
-              completedQuests: [...state.completedQuests, title],
-              level: state.level + 1,
-              currentXp: newXp - state.xpToNextLevel,
-              attributes: attr ? {
-                ...state.attributes,
-                [attr]: state.attributes[attr] + 1,
-              } : state.attributes,
-            };
-          }
+      
+        const newXp = state.currentXp + xpReward;
+        const updatedAttributes = {
+          ...state.attributes,
+          [attribute]: state.attributes[attribute] + 1,
+        };
+      
+        if (newXp >= state.xpToNextLevel) {
           return {
             completedQuests: [...state.completedQuests, title],
-            currentXp: newXp,
-            attributes: attr ? {
-              ...state.attributes,
-              [attr]: state.attributes[attr] + 1,
-            } : state.attributes,
+            level: state.level + 1,
+            currentXp: newXp - state.xpToNextLevel,
+            attributes: updatedAttributes,
           };
-        }),
+        }
+        return {
+          completedQuests: [...state.completedQuests, title],
+          currentXp: newXp,
+          attributes: updatedAttributes,
+        };
+      }),
 
       resetQuests: () => set({ completedQuests: [] }),
 

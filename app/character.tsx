@@ -1,11 +1,22 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useCharacterStore } from '../store/habitsStore';
+import { Quest } from '../types';
 
 export default function CharacterScreen() {
 
   //Adding variables from habit store
   const { level, currentXp, xpToNextLevel, completedQuests, completeQuest, attributes } = useCharacterStore();
+
+  //Defining daily quests
+  const quests: Quest[] = [
+    { icon: "💪", title: "Morning Workout", reward: "+150 XP · STRENGTH", xpReward: 150, attribute: "STRENGTH" },
+    { icon: "📚", title: "Read 30 Minutes", reward: "+75 XP · INTELLIGENCE", xpReward: 75, attribute: "INTELLIGENCE" },
+    { icon: "🧘", title: "Meditate", reward: "+100 XP · FOCUS", xpReward: 100, attribute: "FOCUS" },
+    { icon: "🧊", title: "Cold Shower", reward: "+50 XP · DISCIPLINE", xpReward: 50, attribute: "DISCIPLINE" },
+    { icon: "🏃", title: "Run 5K", reward: "+350 XP · ENDURANCE", xpReward: 350, attribute: "ENDURANCE" },
+    { icon: "🤸", title: "Stretch Routine", reward: "+50 XP · AGILITY", xpReward: 50, attribute: "AGILITY" },
+  ];
 
   //Temporary function to delete data for testing purposes
   const clearData = async () => {
@@ -59,19 +70,18 @@ export default function CharacterScreen() {
   };
   //end of attribute section
 
-  const renderQuest = (icon: string, title: string, reward: string, xpReward: number) => {
-    const isCompleted = completedQuests.includes(title);
+  const renderQuest = (quest: Quest) => {
+    const isCompleted = completedQuests.includes(quest.title);
   
-    //Handles completed quest
-    const handleComplete = () => completeQuest(title, xpReward);
+    const handleComplete = () => completeQuest(quest.title, quest.xpReward, quest.attribute);
   
     return (
-      <View style={styles.questItem} key={title}>
+      <View style={styles.questItem} key={quest.title}>
         <View style={styles.questLeft}>
-          <Text style={styles.questIcon}>{icon}</Text>
+          <Text style={styles.questIcon}>{quest.icon}</Text>
           <View>
-            <Text style={[styles.questTitle, isCompleted && { color: "#9ca3af" }]}>{title}</Text>
-            <Text style={styles.questReward}>{reward}</Text>
+            <Text style={[styles.questTitle, isCompleted && { color: "#9ca3af" }]}>{quest.title}</Text>
+            <Text style={styles.questReward}>{quest.reward}</Text>
           </View>
         </View>
   
@@ -84,7 +94,6 @@ export default function CharacterScreen() {
       </View>
     );
   };
-  
   return (
     //<View style={styles.screen}>
     <ScrollView style={styles.screen} 
@@ -128,13 +137,7 @@ export default function CharacterScreen() {
       {/* DAILY QUESTS SECTION */}
       <View style={styles.questsContainer}>
         <Text style={styles.questsTitle}>DAILY QUESTS</Text>
-
-        {renderQuest("💪", "Morning Workout", "+150 XP · STRENGTH", 150)}
-        {renderQuest("📚", "Read 30 Minutes", "+75 XP · INTELLIGENCE", 75)}
-        {renderQuest("🧘", "Meditate", "+100 XP · FOCUS", 100)}
-        {renderQuest("🧊", "Cold Shower", "+50 XP · DISCIPLINE", 50)}
-        {renderQuest("🏃", "Run 5K", "+350 XP · ENDURANCE", 350)}
-        {renderQuest("🤸", "Stretch Routine", "+50 XP · AGILITY", 50)}
+        {quests.map(q => renderQuest(q))}
       </View>
 
 

@@ -13,3 +13,11 @@ export interface Habit {
   createdAt: string;
   completedDates: string[];
 }
+
+export interface Quest {
+  icon: string;
+  title: string;
+  reward: string;
+  xpReward: number;
+  attribute: Attribute;
+}
