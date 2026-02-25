@@ -23,6 +23,10 @@ export default function CharacterScreen() {
       completedQuests: [],
       dailyQuestDate: '',
       dailyQuests: [],
+      hasCompletedOnboarding: false,
+      characterName: '',
+      strongestAttribute: null,
+      weakestAttribute: null,
       attributes: {
         STRENGTH: 3,
         ENDURANCE: 3,
