@@ -1,7 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
-import { Attribute, Habit } from '../types';
+import { Attribute, Habit, Quest } from '../types';
+import { getDailyQuests, getTodayLocal } from '../utils/dateHelpers';
 
 //Character state variables
 interface CharacterState {
@@ -9,6 +10,8 @@ interface CharacterState {
   currentXp: number;
   xpToNextLevel: number;
   completedQuests: string[];
+  dailyQuestDate: string;    
+  dailyQuests: Quest[];      
   attributes: {
     STRENGTH: number;
     ENDURANCE: number;
@@ -20,6 +23,7 @@ interface CharacterState {
   addXp: (amount: number) => void;
   completeQuest: (title: string, xpReward: number, attribute: Attribute) => void;
   resetQuests: () => void;
+  refreshDailyQuests: () => void;
 }
 
 //Habit interface
@@ -38,6 +42,8 @@ export const useCharacterStore = create<CharacterState & HabitsState>()(
       currentXp: 0,
       xpToNextLevel: 500,
       completedQuests: [],
+      dailyQuestDate: '',      //Daily quest date
+      dailyQuests: [],         //Array of the days daily quests
       attributes: { //Adding starting attributes
         STRENGTH: 3, 
         ENDURANCE: 3,
@@ -78,6 +84,18 @@ export const useCharacterStore = create<CharacterState & HabitsState>()(
       }),
 
       resetQuests: () => set({ completedQuests: [] }),
+
+      // --Action to refresh the daily quests from array of predetermined quests
+
+      refreshDailyQuests: () => set((state) => {   // ← new
+        const today = getTodayLocal();
+        if (state.dailyQuestDate === today) return state;
+        return {
+          dailyQuestDate: today,
+          dailyQuests: getDailyQuests(today),
+          completedQuests: [],
+        };
+      }),
 
       // --- HABITS STATE ---
       habits: [],

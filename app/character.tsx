@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useEffect } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useCharacterStore } from '../store/habitsStore';
 import { Quest } from '../types';
@@ -6,17 +7,12 @@ import { Quest } from '../types';
 export default function CharacterScreen() {
 
   //Adding variables from habit store
-  const { level, currentXp, xpToNextLevel, completedQuests, completeQuest, attributes } = useCharacterStore();
+  const { level, currentXp, xpToNextLevel, completedQuests, completeQuest, attributes, dailyQuests, refreshDailyQuests } = useCharacterStore();
 
-  //Defining daily quests
-  const quests: Quest[] = [
-    { icon: "💪", title: "Morning Workout", reward: "+150 XP · STRENGTH", xpReward: 150, attribute: "STRENGTH" },
-    { icon: "📚", title: "Read 30 Minutes", reward: "+75 XP · INTELLIGENCE", xpReward: 75, attribute: "INTELLIGENCE" },
-    { icon: "🧘", title: "Meditate", reward: "+100 XP · FOCUS", xpReward: 100, attribute: "FOCUS" },
-    { icon: "🧊", title: "Cold Shower", reward: "+50 XP · DISCIPLINE", xpReward: 50, attribute: "DISCIPLINE" },
-    { icon: "🏃", title: "Run 5K", reward: "+350 XP · ENDURANCE", xpReward: 350, attribute: "ENDURANCE" },
-    { icon: "🤸", title: "Stretch Routine", reward: "+50 XP · AGILITY", xpReward: 50, attribute: "AGILITY" },
-  ];
+  //Runs upon screen loading to check if update daily quests
+  useEffect(() => {
+    refreshDailyQuests();
+  }, []);
 
   //Temporary function to delete data for testing purposes
   const clearData = async () => {
@@ -25,6 +21,8 @@ export default function CharacterScreen() {
       level: 1,
       currentXp: 0,
       completedQuests: [],
+      dailyQuestDate: '',
+      dailyQuests: [],
       attributes: {
         STRENGTH: 3,
         ENDURANCE: 3,
@@ -137,7 +135,7 @@ export default function CharacterScreen() {
       {/* DAILY QUESTS SECTION */}
       <View style={styles.questsContainer}>
         <Text style={styles.questsTitle}>DAILY QUESTS</Text>
-        {quests.map(q => renderQuest(q))}
+        {dailyQuests.map(q => renderQuest(q))}
       </View>
 
 
