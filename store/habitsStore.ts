@@ -20,10 +20,15 @@ interface CharacterState {
     INTELLIGENCE: number;
     AGILITY: number;
   };
+  hasCompletedOnboarding: boolean;
+  characterName: string;
+  strongestAttribute: Attribute | null;
+  weakestAttribute: Attribute | null;
   addXp: (amount: number) => void;
   completeQuest: (title: string, xpReward: number, attribute: Attribute) => void;
   resetQuests: () => void;
   refreshDailyQuests: () => void;
+  completeOnboarding: (name: string, strongest: Attribute, weakest: Attribute) => void;
 }
 
 //Habit interface
@@ -52,6 +57,33 @@ export const useCharacterStore = create<CharacterState & HabitsState>()(
         INTELLIGENCE: 3,
         AGILITY: 3,
       },
+      hasCompletedOnboarding: false,
+      characterName: '',
+      strongestAttribute: null,
+      weakestAttribute: null,
+      
+      completeOnboarding: (name, strongest, weakest) => set(() => {
+        const startingAttributes = {
+          STRENGTH: 3,
+          ENDURANCE: 3,
+          DISCIPLINE: 3,
+          FOCUS: 3,
+          INTELLIGENCE: 3,
+          AGILITY: 3,
+        };
+      
+        startingAttributes[strongest] = 6;
+        startingAttributes[weakest] = 1;
+      
+        return {
+          hasCompletedOnboarding: true,
+          characterName: name,
+          strongestAttribute: strongest,
+          weakestAttribute: weakest,
+          attributes: startingAttributes,
+        };
+      }),
+      
       addXp: (amount) => set((state) => {
         const newXp = state.currentXp + amount;
         if (newXp >= state.xpToNextLevel) {
@@ -161,7 +193,7 @@ export const useCharacterStore = create<CharacterState & HabitsState>()(
       })),
     }),
     {
-      name: 'character-storage',
+      name: 'character-storage-v2', //Change every time for fresh store when making changes
       storage: createJSONStorage(() => AsyncStorage),
     }
   )

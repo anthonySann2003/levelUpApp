@@ -7,7 +7,7 @@ import { Quest } from '../types';
 export default function CharacterScreen() {
 
   //Adding variables from habit store
-  const { level, currentXp, xpToNextLevel, completedQuests, completeQuest, attributes, dailyQuests, refreshDailyQuests } = useCharacterStore();
+  const { level, currentXp, xpToNextLevel, completedQuests, completeQuest, attributes, dailyQuests, refreshDailyQuests, characterName } = useCharacterStore();
 
   //Runs upon screen loading to check if update daily quests
   useEffect(() => {
@@ -100,7 +100,8 @@ export default function CharacterScreen() {
     >
       <View style={styles.header}>
         <Text style={styles.title}>Quest Log</Text>
-        <Text style={styles.subtitle}>{completedQuests.length} / 6 QUESTS COMPLETED TODAY</Text>
+        <Text style={styles.characterName}>{characterName}</Text>
+        <Text style={styles.subtitle}>{completedQuests.length} / {dailyQuests.length} QUESTS COMPLETED TODAY</Text>
       </View>
 
       <View style={styles.levelContainer}>
@@ -348,5 +349,12 @@ const styles = StyleSheet.create({
     borderRadius: 11,
     borderWidth: 2,
     borderColor: "#374151",
+  },
+  characterName: {
+    color: '#facc15',
+    fontSize: 18,
+    fontWeight: '600',
+    marginTop: 4,
+    letterSpacing: 1,
   },
 });
