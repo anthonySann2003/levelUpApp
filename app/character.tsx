@@ -20,6 +20,7 @@ export default function CharacterScreen() {
     useCharacterStore.setState({
       level: 1,
       currentXp: 0,
+      lastXpGained: 0,
       completedQuests: [],
       dailyQuestDate: '',
       dailyQuests: [],

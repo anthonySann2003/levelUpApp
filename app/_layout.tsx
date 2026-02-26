@@ -1,5 +1,7 @@
 import { Tabs, router } from "expo-router";
 import { useEffect } from "react";
+import { View } from "react-native";
+import XPBar from "../components/XPBar";
 import { useLevelUpSound } from '../hooks/useLevelUpSound';
 import { useCharacterStore } from "../store/habitsStore";
 
@@ -17,16 +19,19 @@ export default function RootLayout() {
   }, [hasCompletedOnboarding]);
 
   return (
-    <Tabs screenOptions={{
-      headerShown: false,
-      tabBarStyle: { backgroundColor: "#111827", borderTopColor: "#1f2937" },
-      tabBarActiveTintColor: "#facc15",
-      tabBarInactiveTintColor: "#6b7280",
-    }}>
-      <Tabs.Screen name="index" options={{ title: "Home" }} />
-      <Tabs.Screen name="character" options={{ title: "Character" }} />
-      <Tabs.Screen name="habits" options={{ title: "Habits" }} />
-      <Tabs.Screen name="onboarding" options={{ href: null }} />
-    </Tabs>
+    <View style={{flex: 1}}>
+      <Tabs screenOptions={{
+        headerShown: false,
+        tabBarStyle: { backgroundColor: "#111827", borderTopColor: "#1f2937" },
+        tabBarActiveTintColor: "#facc15",
+        tabBarInactiveTintColor: "#6b7280",
+      }}>
+        <Tabs.Screen name="index" options={{ title: "Home" }} />
+        <Tabs.Screen name="character" options={{ title: "Character" }} />
+        <Tabs.Screen name="habits" options={{ title: "Habits" }} />
+        <Tabs.Screen name="onboarding" options={{ href: null }} />
+      </Tabs>
+      <XPBar />
+    </View>
   );
 }

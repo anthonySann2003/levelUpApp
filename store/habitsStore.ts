@@ -11,7 +11,8 @@ interface CharacterState {
   xpToNextLevel: number;
   completedQuests: string[];
   dailyQuestDate: string;    
-  dailyQuests: Quest[];      
+  dailyQuests: Quest[];
+  lastXpGained: number;      
   attributes: {
     STRENGTH: number;
     ENDURANCE: number;
@@ -50,6 +51,7 @@ export const useCharacterStore = create<CharacterState & HabitsState>()(
       completedQuests: [],
       dailyQuestDate: '',      //Daily quest date
       dailyQuests: [],         //Array of the days daily quests
+      lastXpGained: 0,
       attributes: { //Adding starting attributes
         STRENGTH: 3, 
         ENDURANCE: 3,
@@ -112,6 +114,7 @@ export const useCharacterStore = create<CharacterState & HabitsState>()(
         return {
           completedQuests: [...state.completedQuests, title],
           currentXp: newXp,
+          lastXpGained: xpReward, //Sets lastxpgained for xp gain animation
           attributes: updatedAttributes,
         };
       }),
@@ -177,6 +180,7 @@ export const useCharacterStore = create<CharacterState & HabitsState>()(
             habits: updatedHabits,
             level: state.level + 1,
             currentXp: newXp - state.xpToNextLevel,
+            lastXpGained: habit.xpReward,
             attributes: updatedAttributes,
           };
         }
@@ -185,6 +189,7 @@ export const useCharacterStore = create<CharacterState & HabitsState>()(
         return {
           habits: updatedHabits,
           currentXp: Math.max(0, newXp),
+          lastXpGained: isCurrentlyComplete ? 0 : habit.xpReward,
           attributes: updatedAttributes,
         };
       }),
