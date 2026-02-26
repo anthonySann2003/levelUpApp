@@ -37,6 +37,7 @@ interface HabitsState {
   addHabit: (habit: Omit<Habit, 'id' | 'createdAt' | 'completedDates'>) => void;
   toggleHabitComplete: (habitId: string, date: string) => void;
   deleteHabit: (habitId: string) => void;
+  editHabit: (habitId: string, updates: Omit<Habit, 'id' | 'createdAt' | 'completedDates'>) => void;
 }
 
 export const useCharacterStore = create<CharacterState & HabitsState>()(
@@ -191,7 +192,17 @@ export const useCharacterStore = create<CharacterState & HabitsState>()(
       deleteHabit: (habitId) => set((state) => ({
         habits: state.habits.filter(h => h.id !== habitId)
       })),
+
+      editHabit: (habitId, updates) => set((state) => ({
+        habits: state.habits.map(h =>
+          h.id !== habitId ? h : {
+            ...h,
+            ...updates,
+          }
+        )
+      })),
     }),
+    
     {
       name: 'character-storage-v2', //Change every time for fresh store when making changes
       storage: createJSONStorage(() => AsyncStorage),

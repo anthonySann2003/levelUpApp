@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 import { FlatList, Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import HabitCard from "../components/HabitCard";
 import { useCharacterStore } from "../store/habitsStore";
-import { Attribute } from "../types";
+import { Attribute, Habit } from "../types";
 import { getTodayLocal } from '../utils/dateHelpers';
 
 export default function HabitsScreen() {
-  const { habits, toggleHabitComplete, deleteHabit, addHabit, level } = useCharacterStore(); //Deconstructing store variables
+  const { habits, toggleHabitComplete, deleteHabit, addHabit, editHabit, level } = useCharacterStore(); //Deconstructing store variables
   const [today, setToday] = useState(getTodayLocal());
+  const [editingHabit, setEditingHabit] = useState<Habit | null>(null);
 
   //Checking for the date on set interval for updating streaks
   useEffect(() => {
@@ -29,18 +30,29 @@ export default function HabitsScreen() {
   const [selectedAttribute, setSelectedAttribute] = useState<Attribute>('STRENGTH');
   const [xpReward, setXpReward] = useState('100');
 
-  //Handles submitting of modal form for adding a habit
+  //Handles submitting of modal form for adding a habit and editing of habit depending on state variable
   const handleAddHabit = () => {
-    if (!name.trim() || !icon.trim()) return; // name and icon are required
+    if (!name.trim() || !icon.trim()) return;
   
-    addHabit({
-      name: name.trim(),
-      description: description.trim() || undefined,
-      icon: icon.trim(),
-      frequency: 'daily',
-      attribute: [selectedAttribute],
-      xpReward: parseInt(xpReward) || 100,
-    });
+    if (editingHabit) {
+      editHabit(editingHabit.id, {
+        name: name.trim(),
+        description: description.trim() || undefined,
+        icon: icon.trim(),
+        frequency: 'daily',
+        attribute: [selectedAttribute],
+        xpReward: parseInt(xpReward) || 100,
+      });
+    } else {
+      addHabit({
+        name: name.trim(),
+        description: description.trim() || undefined,
+        icon: icon.trim(),
+        frequency: 'daily',
+        attribute: [selectedAttribute],
+        xpReward: parseInt(xpReward) || 100,
+      });
+    }
   
     // reset form
     setName('');
@@ -48,7 +60,19 @@ export default function HabitsScreen() {
     setIcon('');
     setSelectedAttribute('STRENGTH');
     setXpReward('100');
+    setEditingHabit(null);
     setModalVisible(false);
+  };
+
+  //Function for when editing a habit
+  const openEditModal = (habit: Habit) => {
+    setEditingHabit(habit);
+    setName(habit.name);
+    setDescription(habit.description || '');
+    setIcon(habit.icon);
+    setSelectedAttribute(habit.attribute[0]);
+    setXpReward(habit.xpReward.toString());
+    setModalVisible(true);
   };
 
   //Start of the UI layout code
@@ -70,6 +94,7 @@ export default function HabitsScreen() {
             isCompleted={item.completedDates.includes(today)}
             onToggle={() => toggleHabitComplete(item.id, today)}
             onDelete={() => deleteHabit(item.id)}
+            onEdit={() => openEditModal(item)}
           />
         )}
         ListEmptyComponent={
@@ -100,8 +125,8 @@ export default function HabitsScreen() {
         <View style={styles.modalOverlay}>
             <View style={styles.modalContainer}>
             <ScrollView showsVerticalScrollIndicator={false}>
-
-                <Text style={styles.modalTitle}>New Habit</Text>
+            {/* Changes name based on edit habit flag */}
+            <Text style={styles.modalTitle}>{editingHabit ? 'Edit Habit' : 'New Habit'}</Text> 
 
                 {/* Name */}
                 <Text style={styles.label}>Name *</Text>
@@ -160,13 +185,22 @@ export default function HabitsScreen() {
                 keyboardType="numeric"
                 />
 
-                {/* Buttons */}
-                <View style={styles.modalButtons}>
-                <Pressable style={styles.cancelButton} onPress={() => setModalVisible(false)}>
+                {/* Buttons */} 
+                {/* Resets the fields if canceled so doesn't think always editing */}
+                <View style={styles.modalButtons}> 
+                  <Pressable style={styles.cancelButton} onPress={() => { 
+                    setEditingHabit(null);
+                    setName('');
+                    setDescription('');
+                    setIcon('');
+                    setSelectedAttribute('STRENGTH');
+                    setXpReward('100');
+                    setModalVisible(false);
+                  }}>
                     <Text style={styles.cancelButtonText}>Cancel</Text>
-                </Pressable>
+                  </Pressable>
                 <Pressable style={styles.submitButton} onPress={handleAddHabit}>
-                    <Text style={styles.submitButtonText}>Add Habit</Text>
+                  <Text style={styles.submitButtonText}>{editingHabit ? 'Save Changes' : 'Add Habit'}</Text>
                 </Pressable>
                 </View>
 

@@ -7,47 +7,48 @@ interface Props {
   isCompleted: boolean;
   onToggle: () => void;
   onDelete: () => void;
+  onEdit: () => void;
 }
 
-export default function HabitCard({ habit, isCompleted, onToggle, onDelete }: Props) {
+export default function HabitCard({ habit, isCompleted, onToggle, onDelete, onEdit }: Props) {
   const streak = calculateStreak(habit.completedDates); //Bringing in calculate streak function
   return (
-    <View style={[styles.card, isCompleted && styles.cardCompleted]}>
-    
-      {/* Streak badge */}
-      {streak > 0 && (
-        <Text style={styles.streakBadge}>🔥{streak}</Text>
-      )}
+    <Pressable onLongPress={onEdit} style={styles.cardPressable}>
+      <View style={[styles.card, isCompleted && styles.cardCompleted]}>
+      
+        {/* Streak badge */}
+        {streak > 0 && (
+          <Text style={styles.streakBadge}>🔥{streak}</Text>
+        )}
 
-      {/* Icon and name */}
-      <Text style={styles.icon}>{habit.icon}</Text>
-      <Text style={styles.name}>{habit.name}</Text>
+        {/* Icon and name */}
+        <Text style={styles.icon}>{habit.icon}</Text>
+        <Text style={styles.name}>{habit.name}</Text>
 
-      {/* Description if it exists */}
-      {habit.description && (
-        <Text style={styles.description}>{habit.description}</Text>
-      )}
+        {/* Description if it exists */}
+        {habit.description && (
+          <Text style={styles.description}>{habit.description}</Text>
+        )}
 
-      {/* Attribute and XP */}
-      <Text style={styles.attribute}>{habit.attribute.join(', ')}</Text>
-      <Text style={styles.xp}>+{habit.xpReward} XP</Text>
+        {/* Attribute and XP */}
+        <Text style={styles.attribute}>{habit.attribute.join(', ')}</Text>
+        <Text style={styles.xp}>+{habit.xpReward} XP</Text>
 
-      {/* Completion checkbox */}
-      <Pressable onPress={onToggle} style={[styles.circle, isCompleted && styles.circleCompleted]} />
+        {/* Completion checkbox */}
+        <Pressable onPress={onToggle} style={[styles.circle, isCompleted && styles.circleCompleted]} />
 
-      {/* Delete button */}
-      <Pressable onPress={onDelete}>
-        <Text style={styles.delete}>✕</Text>
-      </Pressable>
-
-    </View>
+        {/* Delete button */}
+        <Pressable onPress={onDelete}>
+          <Text style={styles.delete}>✕</Text>
+        </Pressable>
+      </View>
+    </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
     flex: 1,
-    margin: 8,
     padding: 16,
     backgroundColor: "#111827",
     borderRadius: 16,
@@ -110,5 +111,9 @@ const styles = StyleSheet.create({
     color: "#f97316",
     fontSize: 11,
     fontWeight: "600",
+  },
+  cardPressable: {
+    flex: 1,
+    margin: 8,
   },
 });
