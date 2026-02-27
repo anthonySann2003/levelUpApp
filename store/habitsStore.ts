@@ -3,6 +3,7 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import { Attribute, Habit, Quest } from '../types';
 import { getDailyQuests, getTodayLocal } from '../utils/dateHelpers';
+import { calculateXpAndLevel } from '../utils/xpHelper';
 
 //Character state variables
 interface CharacterState {
@@ -97,30 +98,24 @@ export const useCharacterStore = create<CharacterState & HabitsState>()(
         }
         return { currentXp: newXp };
       }),
+
+      // -- Handles daily quest completion --
       completeQuest: (title, xpReward, attribute) => set((state) => {
         if (state.completedQuests.includes(title)) return state;
       
-        const newXp = state.currentXp + xpReward;
+        const { level, currentXp, hasJustLeveledUp } = calculateXpAndLevel(state, xpReward);
+      
         const updatedAttributes = {
           ...state.attributes,
           [attribute]: state.attributes[attribute] + 1,
         };
       
-        if (newXp >= state.xpToNextLevel) {
-          return {
-            completedQuests: [...state.completedQuests, title],
-            level: state.level + 1,
-            currentXp: newXp - state.xpToNextLevel,
-            lastXpGained: xpReward,        
-            hasJustLeveledUp: true,        
-            attributes: updatedAttributes,
-          };
-        }
         return {
           completedQuests: [...state.completedQuests, title],
-          currentXp: newXp,
-          lastXpGained: xpReward, //Sets lastxpgained for xp gain animation
-          hasJustLeveledUp: false,
+          level,
+          currentXp,
+          lastXpGained: xpReward,
+          hasJustLeveledUp,
           attributes: updatedAttributes,
         };
       }),
@@ -159,10 +154,11 @@ export const useCharacterStore = create<CharacterState & HabitsState>()(
 
       //Function to handle completed habits on habit screen
       toggleHabitComplete: (habitId, date) => set((state) => {
-        const habit = state.habits.find(h => h.id === habitId); //Checking for the correct habit
+        const habit = state.habits.find(h => h.id === habitId);
         if (!habit) return state;
       
         const isCurrentlyComplete = habit.completedDates.includes(date);
+      
         const updatedHabits = state.habits.map(h =>
           h.id !== habitId ? h :
           isCurrentlyComplete
@@ -170,36 +166,20 @@ export const useCharacterStore = create<CharacterState & HabitsState>()(
             : { ...h, completedDates: [...h.completedDates, date] }
         );
       
-        // calculate XP change
-        const newXp = isCurrentlyComplete
-          ? state.currentXp - habit.xpReward  // unchecking removes XP
-          : state.currentXp + habit.xpReward; // checking adds XP
+        const xpChange = isCurrentlyComplete ? -habit.xpReward : habit.xpReward;
+        const { level, currentXp, hasJustLeveledUp } = calculateXpAndLevel(state, xpChange);
       
-          // get the first attribute from the habit's attribute array
-        const attr = habit.attribute[0] as keyof typeof state.attributes;
-
         const updatedAttributes = {
-            ...state.attributes,
-            [attr]: Math.max(0, state.attributes[attr] + (isCurrentlyComplete ? -1 : 1)),
-          };
-
-        // handle level up
-        if (!isCurrentlyComplete && newXp >= state.xpToNextLevel) {
-          return {
-            habits: updatedHabits,
-            level: state.level + 1,
-            currentXp: newXp - state.xpToNextLevel,
-            lastXpGained: habit.xpReward,
-            hasJustLeveledUp: true,
-            attributes: updatedAttributes,
-          };
-        }
+          ...state.attributes,
+          [habit.attribute[0]]: Math.max(0, state.attributes[habit.attribute[0] as keyof typeof state.attributes] + (isCurrentlyComplete ? -1 : 1)),
+        };
       
-        // handle XP going below 0 on uncheck
         return {
           habits: updatedHabits,
-          currentXp: Math.max(0, newXp),
+          level,
+          currentXp,
           lastXpGained: isCurrentlyComplete ? 0 : habit.xpReward,
+          hasJustLeveledUp,
           attributes: updatedAttributes,
         };
       }),
