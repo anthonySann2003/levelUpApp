@@ -21,6 +21,7 @@ export default function CharacterScreen() {
       level: 1,
       currentXp: 0,
       lastXpGained: 0,
+      hasJustLeveledUp: false,
       completedQuests: [],
       dailyQuestDate: '',
       dailyQuests: [],

@@ -1,6 +1,7 @@
 import { Tabs, router } from "expo-router";
 import { useEffect } from "react";
 import { View } from "react-native";
+import LevelUpOverlay from "../components/LevelUpOverlay";
 import XPBar from "../components/XPBar";
 import { useLevelUpSound } from '../hooks/useLevelUpSound';
 import { useCharacterStore } from "../store/habitsStore";
@@ -32,6 +33,7 @@ export default function RootLayout() {
         <Tabs.Screen name="onboarding" options={{ href: null }} />
       </Tabs>
       <XPBar />
+      <LevelUpOverlay />
     </View>
   );
 }

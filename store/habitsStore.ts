@@ -12,7 +12,8 @@ interface CharacterState {
   completedQuests: string[];
   dailyQuestDate: string;    
   dailyQuests: Quest[];
-  lastXpGained: number;      
+  lastXpGained: number;
+  hasJustLeveledUp: boolean      
   attributes: {
     STRENGTH: number;
     ENDURANCE: number;
@@ -30,6 +31,7 @@ interface CharacterState {
   resetQuests: () => void;
   refreshDailyQuests: () => void;
   completeOnboarding: (name: string, strongest: Attribute, weakest: Attribute) => void;
+  clearLevelUp: () => void;
 }
 
 //Habit interface
@@ -52,6 +54,7 @@ export const useCharacterStore = create<CharacterState & HabitsState>()(
       dailyQuestDate: '',      //Daily quest date
       dailyQuests: [],         //Array of the days daily quests
       lastXpGained: 0,
+      hasJustLeveledUp: false,
       attributes: { //Adding starting attributes
         STRENGTH: 3, 
         ENDURANCE: 3,
@@ -108,6 +111,8 @@ export const useCharacterStore = create<CharacterState & HabitsState>()(
             completedQuests: [...state.completedQuests, title],
             level: state.level + 1,
             currentXp: newXp - state.xpToNextLevel,
+            lastXpGained: xpReward,        
+            hasJustLeveledUp: true,        
             attributes: updatedAttributes,
           };
         }
@@ -115,6 +120,7 @@ export const useCharacterStore = create<CharacterState & HabitsState>()(
           completedQuests: [...state.completedQuests, title],
           currentXp: newXp,
           lastXpGained: xpReward, //Sets lastxpgained for xp gain animation
+          hasJustLeveledUp: false,
           attributes: updatedAttributes,
         };
       }),
@@ -132,6 +138,9 @@ export const useCharacterStore = create<CharacterState & HabitsState>()(
           completedQuests: [],
         };
       }),
+
+      // -- CLEARS LEVEL UP FOR ANIMATION --
+      clearLevelUp: () => set({ hasJustLeveledUp: false }),
 
       // --- HABITS STATE ---
       habits: [],
@@ -181,6 +190,7 @@ export const useCharacterStore = create<CharacterState & HabitsState>()(
             level: state.level + 1,
             currentXp: newXp - state.xpToNextLevel,
             lastXpGained: habit.xpReward,
+            hasJustLeveledUp: true,
             attributes: updatedAttributes,
           };
         }
@@ -211,6 +221,11 @@ export const useCharacterStore = create<CharacterState & HabitsState>()(
     {
       name: 'character-storage-v2', //Change every time for fresh store when making changes
       storage: createJSONStorage(() => AsyncStorage),
+        partialize: (state) => Object.fromEntries(
+          Object.entries(state).filter(([key]) =>
+            !['lastXpGained', 'hasJustLeveledUp'].includes(key)
+          )
+        ),
     }
   )
 );
