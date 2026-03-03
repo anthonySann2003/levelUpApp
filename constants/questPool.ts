@@ -2,10 +2,10 @@ import { Quest } from '../types';
 
 export const QUEST_POOL: Quest[] = [
   // STRENGTH
-  { icon: "💪", title: "Arm Wrestle Someone and Win", reward: "+150 XP · STRENGTH", xpReward: 150, attribute: "STRENGTH" },
+  { icon: "💪", title: "Win An Arm Wrestle", reward: "+150 XP · STRENGTH", xpReward: 150, attribute: "STRENGTH" },
   { icon: "🏋️", title: "Do 15 Push Ups", reward: "+50 XP · STRENGTH", xpReward: 50, attribute: "STRENGTH" },
   { icon: "🏋️‍♂️", title: "Do 10 Squat Jumps", reward: "+75 XP · STRENGTH", xpReward: 75, attribute: "STRENGTH" },
-  { icon: "🧗‍♂️", title: "Do 10 Pull Ups (Assisted or Unassisted)", reward: "+100 XP · STRENGTH", xpReward: 100, attribute: "STRENGTH" },
+  { icon: "🧗‍♂️", title: "Do 10 Pull Ups", reward: "+100 XP · STRENGTH", xpReward: 100, attribute: "STRENGTH" },
   { icon: "🧎", title: "Do 10 Lunges", reward: "+50 XP · STRENGTH", xpReward: 50, attribute: "STRENGTH" },
   { icon: "🥜", title: "Do 30 Crunches", reward: "+100 XP · STRENGTH", xpReward: 100, attribute: "STRENGTH" },
 
@@ -22,7 +22,7 @@ export const QUEST_POOL: Quest[] = [
   { icon: "📵", title: "No Phone for 2 Hours", reward: "+75 XP · DISCIPLINE", xpReward: 75, attribute: "DISCIPLINE" },
   { icon: "🛏️", title: "Make Your Bed", reward: "+25 XP · DISCIPLINE", xpReward: 25, attribute: "DISCIPLINE" },
   { icon: "⏰", title: "Go to bed before Midnight", reward: "+100 XP · DISCIPLINE", xpReward: 100, attribute: "DISCIPLINE" },
-  { icon: "😱", title: "Do something you've been procrastinating", reward: "+350 XP · DISCIPLINE", xpReward: 350, attribute: "DISCIPLINE" },
+  { icon: "😱", title: "Do your most pressing task", reward: "+350 XP · DISCIPLINE", xpReward: 350, attribute: "DISCIPLINE" },
   { icon: "🥦", title: "Eat Vegetables", reward: "+50 XP · DISCIPLINE", xpReward: 50, attribute: "DISCIPLINE" },
 
   // FOCUS
@@ -46,7 +46,7 @@ export const QUEST_POOL: Quest[] = [
   { icon: "🤸", title: "Try a Beginner's Stretch Routine", reward: "+250 XP · AGILITY", xpReward: 250, attribute: "AGILITY" },
   { icon: "🤸‍♀", title: "Try the World's Greatest Stretch", reward: "+50 XP · AGILITY", xpReward: 50, attribute: "AGILITY" },
   { icon: "⚽", title: "Play a Sport for 20 Minutes", reward: "+150 XP · AGILITY", xpReward: 150, attribute: "AGILITY" },
-  { icon: "🤸", title: "Try the Thread the Needle Yoga Pose", reward: "+50 XP · AGILITY", xpReward: 50, attribute: "AGILITY" },
+  { icon: "🤸", title: "Try Thread the Needle Yoga Pose", reward: "+50 XP · AGILITY", xpReward: 50, attribute: "AGILITY" },
   { icon: "🤸‍♂️", title: "Try the Lizard Pose", reward: "+75 XP · AGILITY", xpReward: 75, attribute: "AGILITY" },
   { icon: "🐇", title: "Small Jumps for 1 Minute", reward: "+75 XP · AGILITY", xpReward: 75, attribute: "AGILITY" },
 ];

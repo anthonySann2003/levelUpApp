@@ -92,25 +92,27 @@ export const useCharacterStore = create<CharacterState & HabitsState>()(
 
       // -- Handles daily quest completion --
       completeQuest: (title, xpReward, attribute) => set((state) => {
-        if (state.completedQuests.includes(title)) return state;
+        const isCompleted = state.completedQuests.includes(title);
       
-        const { level, currentXp, hasJustLeveledUp } = calculateXpAndLevel(state, xpReward);
+        const xpChange = isCompleted ? -xpReward : xpReward;
+        const { level, currentXp, hasJustLeveledUp } = calculateXpAndLevel(state, xpChange);
       
         const updatedAttributes = {
           ...state.attributes,
-          [attribute]: state.attributes[attribute] + 1,
+          [attribute]: Math.max(0, state.attributes[attribute] + (isCompleted ? -1 : 1)),
         };
       
         return {
-          completedQuests: [...state.completedQuests, title],
+          completedQuests: isCompleted
+            ? state.completedQuests.filter(q => q !== title)
+            : [...state.completedQuests, title],
           level,
           currentXp,
-          lastXpGained: xpReward,
+          lastXpGained: isCompleted ? 0 : xpReward,
           hasJustLeveledUp,
           attributes: updatedAttributes,
         };
       }),
-
       // --Action to refresh the daily quests from array of predetermined quests
 
       refreshDailyQuests: () => set((state) => {   // ← new
