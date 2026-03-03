@@ -92,7 +92,7 @@ export default function OnboardingScreen() {
             ]}
             onPress={() => {
               if (weakest === attr.key) return;
-              setStrongest(attr.key);
+              setStrongest(strongest === attr.key ? null : attr.key);
             }}
           >
             <Text style={styles.chipIcon}>{attr.icon}</Text>
@@ -117,7 +117,7 @@ export default function OnboardingScreen() {
             ]}
             onPress={() => {
               if (strongest === attr.key) return;
-              setWeakest(attr.key);
+              setWeakest(weakest === attr.key ? null : attr.key);
             }}
           >
             <Text style={styles.chipIcon}>{attr.icon}</Text>
