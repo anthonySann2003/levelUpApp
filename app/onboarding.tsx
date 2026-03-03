@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Image, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useCharacterStore } from '../store/habitsStore';
 import { Attribute } from '../types';
 
@@ -139,11 +139,19 @@ export default function OnboardingScreen() {
   );
 
   return (
-    <ScrollView style={styles.screen} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-      {step === 0 && renderStep0()}
-      {step === 1 && renderStep1()}
-      {step === 2 && renderStep2()}
-    </ScrollView>
+    <View style={{ flex: 1, backgroundColor: '#000000' }}>
+      <ScrollView style={styles.screen} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        {step === 0 && renderStep0()}
+        {step === 1 && renderStep1()}
+        {step === 2 && renderStep2()}
+      </ScrollView>
+
+      <Image
+      source={require('../assets/images/senseitoo.png')}
+      style={styles.character}
+      resizeMode="contain"
+      />
+    </View>
   );
 }
 
@@ -272,5 +280,12 @@ const styles = StyleSheet.create({
   },
   chipTextSelected: {
     color: '#000000',
+  },
+  character: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    width: 200,
+    height: 200,
   },
 });
