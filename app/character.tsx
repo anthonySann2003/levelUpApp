@@ -48,7 +48,7 @@ export default function CharacterScreen() {
     value: number,
     color: string
   ) => {
-    const max = 30; // arbitrary max for skeleton
+    const max = level * 5 + 5; 
     const percentage = (value / max) * 100;
   
     return (
