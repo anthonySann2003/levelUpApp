@@ -27,9 +27,7 @@ interface CharacterState {
   characterName: string;
   strongestAttribute: Attribute | null;
   weakestAttribute: Attribute | null;
-  addXp: (amount: number) => void;
   completeQuest: (title: string, xpReward: number, attribute: Attribute) => void;
-  resetQuests: () => void;
   refreshDailyQuests: () => void;
   completeOnboarding: (name: string, strongest: Attribute, weakest: Attribute) => void;
   clearLevelUp: () => void;
@@ -90,14 +88,7 @@ export const useCharacterStore = create<CharacterState & HabitsState>()(
           attributes: startingAttributes,
         };
       }),
-      
-      addXp: (amount) => set((state) => {
-        const newXp = state.currentXp + amount;
-        if (newXp >= state.xpToNextLevel) {
-          return { level: state.level + 1, currentXp: newXp - state.xpToNextLevel };
-        }
-        return { currentXp: newXp };
-      }),
+    
 
       // -- Handles daily quest completion --
       completeQuest: (title, xpReward, attribute) => set((state) => {
@@ -119,8 +110,6 @@ export const useCharacterStore = create<CharacterState & HabitsState>()(
           attributes: updatedAttributes,
         };
       }),
-
-      resetQuests: () => set({ completedQuests: [] }),
 
       // --Action to refresh the daily quests from array of predetermined quests
 
