@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useCharacterStore } from '../store/habitsStore';
-import { Quest } from '../types';
+import { Attribute, Quest } from '../types';
 import { getTodayLocal } from '../utils/dateHelpers';
 
 export default function BountiesScreen() {
-  const { bounties, fetchBounties, habits, attributes, level } = useCharacterStore();
+  const { bounties, fetchBounties, habits, attributes, level, completedBounties, completeBounty } = useCharacterStore();
   const today = getTodayLocal();
   const [loading, setLoading] = useState(false);
 
@@ -22,19 +22,27 @@ export default function BountiesScreen() {
     load();
   }, []);
 
-  const renderBounty = (quest: Quest) => (
-    <View style={styles.questItem} key={quest.title}>
-      <View style={styles.questLeft}>
-        <Text style={styles.questIcon}>{quest.icon}</Text>
-        <View>
-          <Text style={styles.questTitle}>{quest.title}</Text>
-          <Text style={styles.questReward}>{quest.reward}</Text>
+  const renderBounty = (quest: Quest) => {
+    const isCompleted = completedBounties.includes(quest.title);
+  
+    return (
+      <View style={styles.questItem} key={quest.title}>
+        <View style={styles.questLeft}>
+          <Text style={styles.questIcon}>{quest.icon}</Text>
+          <View>
+            <Text style={[styles.questTitle, isCompleted && { color: '#9ca3af' }]}>{quest.title}</Text>
+            <Text style={styles.questReward}>{quest.reward}</Text>
+          </View>
         </View>
+        <Pressable onPress={() => completeBounty(quest.title, quest.xpReward, quest.attribute as Attribute)}>
+          <View style={[
+            styles.questCircle,
+            isCompleted && { backgroundColor: '#facc15', borderColor: '#facc15' }
+          ]} />
+        </Pressable>
       </View>
-      <View style={styles.questCircle} />
-    </View>
-  );
-
+    );
+  };
   return (
     <View style={styles.screen}>
       <View style={styles.header}>

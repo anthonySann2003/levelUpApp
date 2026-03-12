@@ -30,7 +30,9 @@ interface CharacterState {
   weakestAttribute: Attribute | null;
   bounties: Quest[];
   bountiesLastFetched: string;
+  completedBounties: string[];
   completeQuest: (title: string, xpReward: number, attribute: Attribute) => void;
+  completeBounty: (title: string, xpReward: number, attribute: Attribute) => void;
   refreshDailyQuests: () => void;
   completeOnboarding: (name: string, strongest: Attribute, weakest: Attribute) => void;
   clearLevelUp: () => void;
@@ -71,6 +73,7 @@ export const useCharacterStore = create<CharacterState & HabitsState>()(
       strongestAttribute: null,
       weakestAttribute: null,
       bounties: [],
+      completedBounties: [],
       bountiesLastFetched: '',
       
       completeOnboarding: (name, strongest, weakest) => set(() => {
@@ -119,6 +122,31 @@ export const useCharacterStore = create<CharacterState & HabitsState>()(
           attributes: updatedAttributes,
         };
       }),
+
+      // -- Same as complete quest but for complete bounty, seperates the actions for easier debugging
+      completeBounty: (title, xpReward, attribute) => set((state) => {
+        const isCompleted = state.completedBounties.includes(title);
+      
+        const xpChange = isCompleted ? -xpReward : xpReward;
+        const { level, currentXp, hasJustLeveledUp } = calculateXpAndLevel(state, xpChange);
+      
+        const updatedAttributes = {
+          ...state.attributes,
+          [attribute]: Math.max(0, state.attributes[attribute] + (isCompleted ? -1 : 1)),
+        };
+      
+        return {
+          completedBounties: isCompleted
+            ? state.completedBounties.filter(q => q !== title)
+            : [...state.completedBounties, title],
+          level,
+          currentXp,
+          lastXpGained: isCompleted ? 0 : xpReward,
+          hasJustLeveledUp,
+          attributes: updatedAttributes,
+        };
+      }),
+
       // --Action to refresh the daily quests from array of predetermined quests
 
       refreshDailyQuests: () => set((state) => {   // ← new
@@ -215,7 +243,7 @@ export const useCharacterStore = create<CharacterState & HabitsState>()(
       storage: createJSONStorage(() => AsyncStorage),
         partialize: (state) => Object.fromEntries(
           Object.entries(state).filter(([key]) =>
-            !['lastXpGained', 'hasJustLeveledUp', 'bounties', 'bountiesLastFetched'].includes(key)
+            !['lastXpGained', 'hasJustLeveledUp', 'bounties', 'bountiesLastFetched', 'completedBounties'].includes(key)
           )
         ),
     }
