@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
+import { fetchBounties as fetchBountiesService } from '../api/bountiesService';
 import { Attribute, Habit, Quest } from '../types';
 import { getDailyQuests, getTodayLocal } from '../utils/dateHelpers';
 import { calculateXpAndLevel } from '../utils/xpHelper';
@@ -27,10 +28,13 @@ interface CharacterState {
   characterName: string;
   strongestAttribute: Attribute | null;
   weakestAttribute: Attribute | null;
+  bounties: Quest[];
+  bountiesLastFetched: string;
   completeQuest: (title: string, xpReward: number, attribute: Attribute) => void;
   refreshDailyQuests: () => void;
   completeOnboarding: (name: string, strongest: Attribute, weakest: Attribute) => void;
   clearLevelUp: () => void;
+  fetchBounties: (context: { habits: { name: string; attribute: string }[]; attributes: Record<string, number>; level: number }) => Promise<void>;
 }
 
 //Habit interface
@@ -66,6 +70,8 @@ export const useCharacterStore = create<CharacterState & HabitsState>()(
       characterName: '',
       strongestAttribute: null,
       weakestAttribute: null,
+      bounties: [],
+      bountiesLastFetched: '',
       
       completeOnboarding: (name, strongest, weakest) => set(() => {
         const startingAttributes = {
@@ -124,6 +130,21 @@ export const useCharacterStore = create<CharacterState & HabitsState>()(
           completedQuests: [],
         };
       }),
+
+      // -- FUNCTION TO FETCH BOUNTIES --
+      fetchBounties: async (context) => {
+        const today = getTodayLocal();
+        const state = useCharacterStore.getState();
+        
+        if (state.bountiesLastFetched === today) return;
+      
+        const quests = await fetchBountiesService(context);
+        
+        set({
+          bounties: quests,
+          bountiesLastFetched: today,
+        });
+      },
 
       // -- CLEARS LEVEL UP FOR ANIMATION --
       clearLevelUp: () => set({ hasJustLeveledUp: false }),
@@ -194,7 +215,7 @@ export const useCharacterStore = create<CharacterState & HabitsState>()(
       storage: createJSONStorage(() => AsyncStorage),
         partialize: (state) => Object.fromEntries(
           Object.entries(state).filter(([key]) =>
-            !['lastXpGained', 'hasJustLeveledUp'].includes(key)
+            !['lastXpGained', 'hasJustLeveledUp', 'bounties', 'bountiesLastFetched'].includes(key)
           )
         ),
     }
