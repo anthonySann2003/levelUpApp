@@ -31,7 +31,7 @@ export default function RootLayout() {
         <Tabs.Screen name="character" options={{ title: "Character" }} />
         <Tabs.Screen name="habits" options={{ title: "Habits" }} />
         <Tabs.Screen name="bounties" options={{ title: "Bounties" }} />
-        <Tabs.Screen name="onboarding" options={{ href: null }} />
+        <Tabs.Screen name="onboarding" options={{ href: null, tabBarStyle: {display: 'none'} }} />
       </Tabs>
       <XPBar />
       <LevelUpOverlay />
