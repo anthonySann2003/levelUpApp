@@ -26,13 +26,25 @@ export default function OnboardingScreen() {
     router.replace('/character' as any);
   };
 
-  // STEP 0 - Name input
+  //Helper function
+  const next = () => setStep(prev => prev + 1);
+
+  // STEP 0 - Welcome screen
   const renderStep0 = () => (
     <View style={styles.stepContainer}>
-      <Text style={styles.emoji}>👋</Text>
-      <Text style={styles.heading}>Welcome, Hero</Text>
-      <Text style={styles.subheading}>Before your journey begins, what shall we call you?</Text>
+      <Text style={styles.emoji}>⚔️</Text>
+      <Text style={styles.heading}>Welcome, Hero!</Text>
+      <Pressable style={styles.button} onPress={next}>
+        <Text style={styles.buttonText}>Begin</Text>
+      </Pressable>
+    </View>
+  );
 
+
+  // STEP 1 - Name input
+  const renderStep1 = () => (
+    <View style={styles.stepContainer}>
+      <Text style={styles.heading}>What shall we call you?</Text>
       <TextInput
         style={styles.input}
         placeholder="Enter your name..."
@@ -41,43 +53,49 @@ export default function OnboardingScreen() {
         onChangeText={setName}
         autoFocus
       />
-
       <Pressable
         style={[styles.button, !name.trim() && styles.buttonDisabled]}
-        onPress={() => { if (name.trim()) setStep(1); }}
+        onPress={() => { if (name.trim()) next(); }}
       >
         <Text style={styles.buttonText}>Continue</Text>
       </Pressable>
     </View>
   );
 
-  // STEP 1 - Attribute introduction
-  const renderStep1 = () => (
-    <View style={styles.stepContainer}>
-      <Text style={styles.heading}>Your Attributes</Text>
-      <Text style={styles.subheading}>Every hero has 6 core attributes that grow as you complete habits and quests.</Text>
 
-      <View style={styles.attributeList}>
-        {ATTRIBUTES.map(attr => (
-          <View key={attr.key} style={styles.attributeRow}>
-            <Text style={styles.attributeIcon}>{attr.icon}</Text>
-            <View>
-              <Text style={styles.attributeName}>{attr.key}</Text>
-              <Text style={styles.attributeDesc}>{attr.description}</Text>
-            </View>
-          </View>
-        ))}
+  // STEP 2 - Sensei introduction
+  const renderStep2 = () => (
+    <View style={[styles.stepContainer, { justifyContent: 'flex-start', paddingTop: 200, paddingBottom: 300 }]}>
+      <Text style={styles.heading}>A Stranger Approaches...</Text>
+      <View style={styles.dialogueBox}>
+        <Text style={styles.dialogueName}>Senseitoo</Text>
+        <Text style={styles.dialogueText}>
+          My name is Senseitoo, and I will be your guide on this journey.
+        </Text>
       </View>
-
-      <Pressable style={styles.button} onPress={() => setStep(2)}>
+      <Pressable style={styles.button} onPress={next}>
         <Text style={styles.buttonText}>Continue</Text>
       </Pressable>
     </View>
   );
 
-  // STEP 2 - Strongest and weakest selection
-  const renderStep2 = () => (
+    // STEP 3 - Sensei attributes teaser
+  const renderStep3 = () => (
     <View style={styles.stepContainer}>
+      <View style={styles.dialogueBox}>
+        <Text style={styles.dialogueName}>Senseitoo</Text>
+        <Text style={styles.dialogueText}>
+          First you must learn of the attributes which all heroes must balance.
+        </Text>
+      </View>
+      <Pressable style={styles.button} onPress={next}>
+        <Text style={styles.buttonText}>Show Me</Text>
+      </Pressable>
+    </View>
+  );
+
+  const renderStep4 = () => (
+    <View style={[styles.stepContainer, { justifyContent: 'flex-start', paddingBottom: 300 }]}>
       <Text style={styles.heading}>Know Thyself</Text>
       <Text style={styles.subheading}>Which attribute are you currently strongest in?</Text>
 
@@ -131,12 +149,27 @@ export default function OnboardingScreen() {
 
       <Pressable
         style={[styles.button, (!strongest || !weakest) && styles.buttonDisabled]}
-        onPress={handleFinish}
+        onPress={next}
       >
-        <Text style={styles.buttonText}>Begin Journey</Text>
+        <Text style={styles.buttonText}>Continue</Text>
       </Pressable>
     </View>
   );
+
+  // STEP 5 - Sensei farewell
+const renderStep5 = () => (
+  <View style={[styles.stepContainer, { justifyContent: 'flex-start', paddingTop: 160, paddingBottom: 300 }]}>
+    <View style={styles.dialogueBox}>
+      <Text style={styles.dialogueName}>Senseitoo</Text>
+      <Text style={styles.dialogueText}>
+        With that settled, it's time for you to begin your journey, {name}. Good luck!
+      </Text>
+    </View>
+    <Pressable style={[styles.button, { zIndex: 10 }]} onPress={handleFinish}>
+      <Text style={styles.buttonText}>Begin Journey</Text>
+    </Pressable>
+  </View>
+);
 
   return (
     <View style={{ flex: 1, backgroundColor: '#000000' }}>
@@ -144,13 +177,22 @@ export default function OnboardingScreen() {
         {step === 0 && renderStep0()}
         {step === 1 && renderStep1()}
         {step === 2 && renderStep2()}
+        {step === 3 && renderStep3()}
+        {step === 4 && renderStep4()}
+        {step === 5 && renderStep5()}
+
       </ScrollView>
 
+      {step >= 2 && (
       <Image
-      source={require('../assets/images/senseitoo.png')}
-      style={styles.character}
-      resizeMode="contain"
+        source={require('../assets/images/senseitoo v3.png')}
+        style={[
+          styles.character,
+          (step === 2 || step === 3 || step == 4 || step == 5) && styles.characterCentered
+        ]}
+        resizeMode="contain"
       />
+    )}
     </View>
   );
 }
@@ -287,5 +329,34 @@ const styles = StyleSheet.create({
     right: 0,
     width: 200,
     height: 200,
+  },
+  dialogueBox: {
+    width: '100%',
+    backgroundColor: '#111827',
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#facc15',
+    padding: 20,
+    marginBottom: 24,
+  },
+  dialogueName: {
+    color: '#facc15',
+    fontSize: 13,
+    fontWeight: '700',
+    letterSpacing: 1,
+    marginBottom: 8,
+  },
+  dialogueText: {
+    color: 'white',
+    fontSize: 15,
+    lineHeight: 22,
+  },
+  characterCentered: {
+    position: 'absolute',
+    bottom: -30,
+    left: -10,
+    right: 0,
+    width: '100%',
+    height: '40%',
   },
 });
