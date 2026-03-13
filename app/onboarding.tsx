@@ -183,13 +183,15 @@ const renderStep5 = () => (
 
       </ScrollView>
 
-      {step >= 2 && (
+      {(step === 2 || step === 3 || step == 4 || step === 5) && (
       <Image
-        source={require('../assets/images/senseitoo v3.png')}
-        style={[
-          styles.character,
-          (step === 2 || step === 3 || step == 4 || step == 5) && styles.characterCentered
-        ]}
+        source={
+          step === 2 ? require('../assets/images/senseitoo v3 respect.png') :
+          step === 3 ? require('../assets/images/senseitoo v3.png') :
+          step === 4 ? require('../assets/images/senseitoo v3 thinking.png') :
+          require('../assets/images/senseitoo v3.png')
+        }
+        style={[styles.character, styles.characterCentered]}
         resizeMode="contain"
       />
     )}
