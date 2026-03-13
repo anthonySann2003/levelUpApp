@@ -243,7 +243,7 @@ export const useCharacterStore = create<CharacterState & HabitsState>()(
       storage: createJSONStorage(() => AsyncStorage),
         partialize: (state) => Object.fromEntries(
           Object.entries(state).filter(([key]) =>
-            !['lastXpGained', 'hasJustLeveledUp', 'bounties', 'bountiesLastFetched', 'completedBounties'].includes(key)
+            !['lastXpGained', 'hasJustLeveledUp'].includes(key)
           )
         ),
     }

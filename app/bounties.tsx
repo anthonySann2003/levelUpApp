@@ -46,8 +46,8 @@ export default function BountiesScreen() {
   return (
     <View style={styles.screen}>
       <View style={styles.header}>
-        <Text style={styles.title}>Bounties</Text>
-        <Text style={styles.subtitle}>AI GENERATED DAILY BOUNTIES</Text>
+        <Text style={styles.title}>Bounty Board</Text>
+        <Text style={styles.subtitle}>THE KINGDOM'S BOUNTIES</Text>
       </View>
 
       {loading ? (

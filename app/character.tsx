@@ -29,6 +29,9 @@ export default function CharacterScreen() {
       characterName: '',
       strongestAttribute: null,
       weakestAttribute: null,
+      bountiesLastFetched: '',
+      bounties: [],
+      completedBounties: [],
       attributes: {
         STRENGTH: 3,
         ENDURANCE: 3,
