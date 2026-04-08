@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import AttributeRadarChart from '../components/AttributeRadarChart';
 import { useCharacterStore } from '../store/habitsStore';
 import { Quest } from '../types';
 
@@ -133,6 +134,8 @@ export default function CharacterScreen() {
       {/* ATTRIBUTES SECTION */}
       <View style={styles.attributesContainer}>
         <Text style={styles.attributesTitle}>ATTRIBUTES</Text>
+
+        <AttributeRadarChart attributes={attributes} level={level} />
 
         {renderAttribute("⚔️", "STRENGTH", attributes.STRENGTH, "#ef4444")}
         {renderAttribute("🛡️", "ENDURANCE", attributes.ENDURANCE, "#f97316")}
